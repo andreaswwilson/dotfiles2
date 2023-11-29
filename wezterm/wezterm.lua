@@ -8,7 +8,7 @@ return {
 	initial_rows = 40,
 	initial_cols = 120,
 	window_background_opacity = 1.0,
-	window_decorations = "RESIZE",
+	-- window_decorations = "RESIZE",
 	native_macos_fullscreen_mode = true,
 	keys = {
 		{
@@ -26,7 +26,7 @@ return {
 		},
 	},
 	wezterm.on("gui-startup", function(cmd)
-		local _, _, window = wezterm.mux.spawn_window(cmd or {})
+		local tab, pane, window = wezterm.mux.spawn_window(cmd or {})
 		window:gui_window():maximize()
 	end),
 }

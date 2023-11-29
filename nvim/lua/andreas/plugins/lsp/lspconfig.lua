@@ -59,7 +59,7 @@ return {
 			vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
 		end
 
-		local servers = { "pyright", "jqls", "bashls" }
+		local servers = { "pyright", "jqls", "bashls", "gopls" }
 		-- configure servers
 		for _, server in ipairs(servers) do
 			lspconfig[server].setup({
