@@ -6,8 +6,16 @@ return {
 		vim.o.timeoutlen = 500
 	end,
 	opts = {
-		-- your configuration comes here
-		-- or leave it empty to use the default settings
-		-- refer to the configuration section below
+		plugins = { spelling = true },
+		key_labels = { ["<leader>"] = "SPC" },
 	},
+	config = function(_, opts)
+		local wk = require("which-key")
+		wk.setup(opts)
+		wk.register({
+			["<leader>d"] = { name = "Debug" },
+			["<leader>dg"] = { name = "Debug Go" },
+			["<leader>c"] = { name = "Code Actions" },
+		})
+	end,
 }

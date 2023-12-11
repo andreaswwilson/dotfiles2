@@ -4,7 +4,6 @@ return {
 		"williamboman/mason-lspconfig.nvim",
 		"jayp0521/mason-null-ls.nvim",
 		"jose-elias-alvarez/null-ls.nvim",
-		"mfussenegger/nvim-dap",
 		"jay-babu/mason-nvim-dap.nvim",
 	},
 	config = function()
