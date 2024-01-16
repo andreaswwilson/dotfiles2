@@ -5,7 +5,7 @@ return {
 		local lint = require("lint")
 		local virtual = os.getenv("VIRTUAL_ENV") or os.getenv("CONDA_DEFAULT_ENV") or "/usr"
 		lint.linters.mypy.args =
-			vim.list_extend({ "--python-executable", virtual .. "/bin/python3" }, lint.linters.mypy.args)
+				vim.list_extend({ "--python-executable", virtual .. "/bin/python3" }, lint.linters.mypy.args)
 		lint.linters_by_ft = {
 			go = { "golangcilint" },
 			python = { "bandit", "ruff", "mypy" },

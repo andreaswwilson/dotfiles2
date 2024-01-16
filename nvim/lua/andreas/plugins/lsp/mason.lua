@@ -15,6 +15,7 @@ return {
 				"bashls",
 				"lua_ls",
 				"pyright",
+				"marksman",
 				"terraformls",
 				"yamlls",
 			},

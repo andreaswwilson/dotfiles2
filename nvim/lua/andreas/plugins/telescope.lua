@@ -17,6 +17,7 @@ return {
 		{ "<leader>fw",       "<cmd>Telescope grep_string<cr>",               desc = "Find string under cursor in cwd" },
 		{ "<leader>fb",       "<cmd>Telescope current_buffer_fuzzy_find<cr>", desc = "Find string in current buffer" },
 		{ "<leader><leader>", "<cmd>Telescope buffers<cr>",                   desc = "List open buffers" },
+		{ "<leader>fh",       "<cmd>Telescope help_tags<cr>",                 desc = "Open help tags" },
 	},
 	config = function()
 		local telescope = require("telescope")
@@ -24,6 +25,7 @@ return {
 
 		telescope.setup({
 			defaults = {
+				vimgrep_arguments = { 'rg', '--hidden', '--no-heading', '--with-filename', '--line-number', '--column', '--smart-case', '-g', '!.git' },
 				path_display = { "truncate " },
 				mappings = {
 					i = {
