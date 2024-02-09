@@ -12,9 +12,6 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup({ { import = "andreas.plugins" }, { import = "andreas.plugins.lsp" } }, {
-  install = {
-    colorscheme = { "catpuccin" },
-  },
   change_detection = {
     notify = false,
   },
