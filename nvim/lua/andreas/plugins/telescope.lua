@@ -12,6 +12,7 @@ return {
 	cmd = "Telescope",
 	keys = {
 		{ "<leader>ff",       "<cmd>Telescope git_files<cr>",                 desc = "Fuzzy find files in .git" },
+		{ "<leader>fF",       "<cmd>Telescope find_files<cr>",                desc = "Fuzzy find files in cwd" },
 		{ "<leader>fr",       "<cmd>Telescope oldfiles<cr>",                  desc = "Fuzzy find recent files" },
 		{ "<leader>fg",       "<cmd>Telescope live_grep<cr>",                 desc = "Find string in cwd" },
 		{ "<leader>fw",       "<cmd>Telescope grep_string<cr>",               desc = "Find string under cursor in cwd" },
