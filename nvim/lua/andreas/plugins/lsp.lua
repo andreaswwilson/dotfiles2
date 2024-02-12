@@ -1,26 +1,28 @@
 return {
-  {
-    "williamboman/mason.nvim",
-    cmd = { "Mason", "MasonInstall", "MasonInstallAll", "MasonUpdate" },
-    config = function()
-      require("mason").setup()
-    end,
-  },
-    {
-    "neovim/nvim-lspconfig",
-    dependencies =  {
-      {'hrsh7th/cmp-nvim-lsp'},
-      {'williamboman/mason-lspconfig.nvim'},
-      {"williamboman/mason.nvim"}
-    },
+	{
+		"williamboman/mason.nvim",
+		cmd = { "Mason", "MasonInstall", "MasonInstallAll", "MasonUpdate" },
+		config = function()
+			require("mason").setup()
+		end,
+	},
+	{
+		"neovim/nvim-lspconfig",
+		dependencies = {
+			{ "hrsh7th/cmp-nvim-lsp" },
+			{ "williamboman/mason-lspconfig.nvim" },
+			{ "williamboman/mason.nvim" },
+		},
 
-    event = "User FilePost",
-    config = function()
-      local lspconfig = require("lspconfig")
+		event = "User FilePost",
+		config = function()
+			local lspconfig = require("lspconfig")
 
-      local cmp_nvim_lsp = require("cmp_nvim_lsp")
-      local keymap = vim.keymap -- for conciseness
-
+			require("mason-lspconfig").setup({
+				ensure_installed = { "bashls", "lua_ls", "jqls", "gopls", "marksman", "terraformls" },
+			})
+			local cmp_nvim_lsp = require("cmp_nvim_lsp")
+			local keymap = vim.keymap -- for conciseness
 
 			local opts = { noremap = true, silent = true }
 			local on_attach = function(_, bufnr)
@@ -57,15 +59,10 @@ return {
 				keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, opts)
 			end
 
-      vim.lsp.handlers['textdocument/hover'] = vim.lsp.with(
-        vim.lsp.handlers.hover,
-        {border = 'rounded'}
-      )
+			vim.lsp.handlers["textdocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, { border = "rounded" })
 
-      vim.lsp.handlers['textdocument/signaturehelp'] = vim.lsp.with(
-        vim.lsp.handlers.signature_help,
-        {border = 'rounded'}
-      )
+			vim.lsp.handlers["textdocument/signaturehelp"] =
+				vim.lsp.with(vim.lsp.handlers.signature_help, { border = "rounded" })
 			-- used to enable autocompletion (assign to every lsp server config)
 			local capabilities = cmp_nvim_lsp.default_capabilities()
 
@@ -76,21 +73,52 @@ return {
 				vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
 			end
 
-      -- Default setup
-      local servers = { "jqls", "bashls", "gopls", "marksman" }
+			-- Default setup
+			local servers = { "lua_ls", "jqls", "bashls", "gopls", "marksman" }
 			for _, server in ipairs(servers) do
 				lspconfig[server].setup({
 					capabilities = capabilities,
 					on_attach = on_attach,
 				})
 			end
-      -- configure terraformls
-      lspconfig.terraformls.setup({
-        capabilities = capabilities,
-        on_attach = on_attach,
-        filetypes = { "terraform" }, -- Specify the filetypes for which terraformls should be activated
-      })
-    end,
-
-  },
+			-- configure terraformls
+			lspconfig.terraformls.setup({
+				capabilities = capabilities,
+				on_attach = on_attach,
+				filetypes = { "terraform" }, -- Specify the filetypes for which terraformls should be activated
+			})
+			-- lua_ls
+			--
+			local runtime_path = vim.split(package.path, ";")
+			table.insert(runtime_path, "lua/?.lua")
+			table.insert(runtime_path, "lua/?/init.lua")
+			lspconfig.lua_ls.setup({
+				capabilities = capabilities,
+				settings = {
+					Lua = {
+						runtime = {
+							-- Tell the language server which version of Lua you're using
+							version = "LuaJIT",
+							path = runtime_path,
+						},
+						diagnostics = {
+							-- Get the language server to recognize the `vim` global
+							globals = { "vim" },
+						},
+						workspace = {
+							library = {
+								-- Make the server aware of Neovim runtime files
+								vim.fn.expand("$VIMRUNTIME/lua"),
+								vim.fn.stdpath("config") .. "/lua",
+							},
+							checkThirdParty = false,
+						},
+						telemetry = {
+							enable = false,
+						},
+					},
+				},
+			})
+		end,
+	},
 }
