@@ -1,20 +1,26 @@
 return {
-	{
-		"neovim/nvim-lspconfig",
-		event = { "BufReadPre", "BufNewFile" },
-		dependencies = {
-			"nvim-lua/plenary.nvim",
-			"hrsh7th/cmp-nvim-lsp",
-			{ "antosha417/nvim-lsp-file-operations", config = true },
-		},
-		config = function()
-			-- import lspconfig plugin
-			local lspconfig = require("lspconfig")
+  {
+    "williamboman/mason.nvim",
+    cmd = { "Mason", "MasonInstall", "MasonInstallAll", "MasonUpdate" },
+    config = function()
+      require("mason").setup()
+    end,
+  },
+    {
+    "neovim/nvim-lspconfig",
+    dependencies =  {
+      {'hrsh7th/cmp-nvim-lsp'},
+      {'williamboman/mason-lspconfig.nvim'},
+      {"williamboman/mason.nvim"}
+    },
 
-			-- import cmp-nvim-lsp plugin
-			local cmp_nvim_lsp = require("cmp_nvim_lsp")
+    event = "User FilePost",
+    config = function()
+      local lspconfig = require("lspconfig")
 
-			local keymap = vim.keymap -- for conciseness
+      local cmp_nvim_lsp = require("cmp_nvim_lsp")
+      local keymap = vim.keymap -- for conciseness
+
 
 			local opts = { noremap = true, silent = true }
 			local on_attach = function(_, bufnr)
@@ -51,53 +57,40 @@ return {
 				keymap.set("n", "<C-k>", vim.lsp.buf.signature_help, opts)
 			end
 
+      vim.lsp.handlers['textdocument/hover'] = vim.lsp.with(
+        vim.lsp.handlers.hover,
+        {border = 'rounded'}
+      )
+
+      vim.lsp.handlers['textdocument/signaturehelp'] = vim.lsp.with(
+        vim.lsp.handlers.signature_help,
+        {border = 'rounded'}
+      )
 			-- used to enable autocompletion (assign to every lsp server config)
 			local capabilities = cmp_nvim_lsp.default_capabilities()
 
 			-- Change the Diagnostic symbols in the sign column (gutter)
-			-- (not in youtube nvim video)
 			local signs = { Error = " ", Warn = " ", Hint = "󰠠 ", Info = " " }
 			for type, icon in pairs(signs) do
 				local hl = "DiagnosticSign" .. type
 				vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
 			end
 
-			local servers = { "pyright", "jqls", "bashls", "gopls", "marksman" }
-			-- configure servers
+      -- Default setup
+      local servers = { "jqls", "bashls", "gopls", "marksman" }
 			for _, server in ipairs(servers) do
 				lspconfig[server].setup({
 					capabilities = capabilities,
 					on_attach = on_attach,
 				})
 			end
+      -- configure terraformls
+      lspconfig.terraformls.setup({
+        capabilities = capabilities,
+        on_attach = on_attach,
+        filetypes = { "terraform" }, -- Specify the filetypes for which terraformls should be activated
+      })
+    end,
 
-			-- configure terraformls
-			lspconfig.terraformls.setup({
-				capabilities = capabilities,
-				on_attach = on_attach,
-				filetypes = { "terraform" }, -- Specify the filetypes for which terraformls should be activated
-			})
-			-- configure lua server (with special settings)
-
-			lspconfig["lua_ls"].setup({
-				capabilities = capabilities,
-				on_attach = on_attach,
-				settings = { -- custom settings for lua
-					Lua = {
-						-- make the language server recognize "vim" global
-						diagnostics = {
-							globals = { "vim" },
-						},
-						workspace = {
-							-- make language server aware of runtime files
-							library = {
-								[vim.fn.expand("$VIMRUNTIME/lua")] = true,
-								[vim.fn.stdpath("config") .. "/lua"] = true,
-							},
-						},
-					},
-				},
-			})
-		end,
-	},
+  },
 }

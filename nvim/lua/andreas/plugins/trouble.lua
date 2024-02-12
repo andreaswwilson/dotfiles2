@@ -37,12 +37,6 @@ return {
 			end,
 			desc = "trouble: loclist",
 		},
-		{
-			"gR",
-			function()
-				require("trouble").toggle("lsp_references")
-			end,
-		},
 	},
 	opts = {
 		-- your configuration comes here
